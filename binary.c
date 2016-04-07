@@ -96,7 +96,21 @@ void binary_mode()
 
 	display(&info);
 
+	
+	ptrace_write(child_pid, (void *)options.start, bytecode, bytecode_sz);
+	ptrace_reset(child_pid, options.start);
 
+	ptrace_cont(child_pid, &info);
+
+	if (ptrace_reap(child_pid, &info)) {
+	  child_died = 1;
+	  break;
+	}
+
+	display(&info);
+	
+	
+	
 	exit(EXIT_SUCCESS);
 	
 }
