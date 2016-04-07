@@ -50,7 +50,7 @@ void _child_objcopy(
 }
 
 const
-size_t assemble_arm(
+size_t assemble(
 		uint8_t *const bytecode,
 		const size_t bytecode_sz,
 		const char *const assembly,

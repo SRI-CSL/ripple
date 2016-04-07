@@ -27,12 +27,15 @@
 #endif
 
 struct options_t {
-	unsigned long start;
-	int raw;
-	int verbose;
-	int allregs;
-	int passsig;
-	const char *savefile;
+  unsigned long start;
+  int raw;
+  int verbose;
+  int allregs;
+  int passsig;
+  const char *savefile;
+  const char *binary;
+  off_t offset;
+  size_t count;
 };
 
 #define REGFMT64 "0x%016" PRIx64

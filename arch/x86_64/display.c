@@ -6,7 +6,7 @@
 
 extern struct options_t options;
 
-void display_amd64(
+void display(
 		const struct proc_info_t *const info)
 {
 	const struct user_regs_struct_amd64   *regs   = &info->regs_struct;

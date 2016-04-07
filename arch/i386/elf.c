@@ -2,11 +2,13 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <sys/user.h>
+
 #include "common.h"
 
 #include "elf_gen.h"
 
-const size_t gen_elf_arm(
+const size_t gen_elf(
 		uint8_t **out,
 		const unsigned long start,
 		const uint8_t *const code,
@@ -56,7 +58,7 @@ const size_t gen_elf_arm(
 	ehdr->e_ident[9] = 0;
 	// Padding
 	ehdr->e_type = ET_EXEC;
-	ehdr->e_machine = EM_ARM;
+	ehdr->e_machine = EM_386;
 	ehdr->e_version = EV_CURRENT;
 	ehdr->e_entry = start;
 	ehdr->e_phoff = sizeof(Elf32_Ehdr);

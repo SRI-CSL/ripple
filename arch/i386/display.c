@@ -6,7 +6,7 @@
 
 extern struct options_t options;
 
-void display_x86(
+void display(
 		const struct proc_info_t *const info)
 {
 	const struct user_regs_struct_x86    *regs    = &info->regs_struct;
