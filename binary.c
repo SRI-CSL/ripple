@@ -97,6 +97,8 @@ void binary_mode()
 
 	
 	ptrace_write(child_pid, (void *)options.start, bytecode, bytecode_sz);
+
+	
 	ptrace_reset(child_pid, options.start);
 
 	ptrace_cont(child_pid, &info);
@@ -105,5 +107,7 @@ void binary_mode()
 	ptrace_detatch(child_pid, &info);
 
 	display(&info);
+	
+	free(bytecode);
 	
 }

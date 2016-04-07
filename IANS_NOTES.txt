@@ -1,0 +1,7 @@
+all of the text segment ...
+
+./bin/rappel -v -b ../DoubleHelix/Examples/minimal/mini -o 1024 -c  402
+
+just main
+./bin/rappel -v -b ../DoubleHelix/Examples/minimal/mini -o 1270 -c  30
+
