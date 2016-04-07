@@ -20,7 +20,6 @@
 #define BYTECODE_BUF_SZ 64000000 // 64mb
 
 extern struct options_t options;
-extern pid_t tracee;
 
 //duplicate code needs a shared home.
 static const
@@ -102,15 +101,9 @@ void binary_mode()
 
 	ptrace_cont(child_pid, &info);
 
-	if (ptrace_reap(child_pid, &info)) {
-	  child_died = 1;
-	  break;
-	}
+	ptrace_reap(child_pid, &info);
+	ptrace_detatch(child_pid, &info);
 
 	display(&info);
-	
-	
-	
-	exit(EXIT_SUCCESS);
 	
 }
