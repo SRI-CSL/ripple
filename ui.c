@@ -15,6 +15,7 @@
 #include "exedir.h"
 #include "elf_gen.h"
 #include "ptrace.h"
+#include "child.h"
 
 #include "ui.h"
 
@@ -37,14 +38,15 @@ static
 void help()
 {
 	printf("Commands:\n");
-	printf(".quit                    - quit\n");
-	printf(".help                    - display this help\n");
-	printf(".info                    - display registers\n");
-	printf(".begin                   - start a block, input will not be assembled/run until '.end'\n");
-	printf(".end                     - assemble and run the prior block\n");
-	printf(".showmap                 - shortcut for cat /proc/<pid>/maps\n");
-	printf(".read <address> [amount] - read <amount> bytes of data from address using ptrace [16]\n");
-	printf(".write <address> <data>  - write data starting at address using ptrace\n");
+	printf(".quit                               - quit\n");
+	printf(".help                               - display this help\n");
+	printf(".info                               - display registers\n");
+	printf(".begin                              - start a block, input will not be assembled/run until '.end'\n");
+	printf(".end                                - assemble and run the prior block\n");
+	printf(".showmap                            - shortcut for cat /proc/<pid>/maps\n");
+	printf(".read <address> [amount]            - read <amount> bytes of data from address using ptrace [16]\n");
+	printf(".write <address> <data>             - write data starting at address using ptrace\n");
+	printf(".execute <binary> <offset> <length> - execute the sequence of machine code at offset in binary\n");
 }
 
 static
@@ -104,34 +106,6 @@ bail:
 	free(dupline);
 }
 
-static const
-pid_t _gen_child() {
-	uint8_t buf[PAGE_SIZE];
-	mem_assign(buf, PAGE_SIZE, TRAP, TRAP_SZ);
-
-	uint8_t *elf;
-	const size_t elf_sz = gen_elf(&elf, options.start, (uint8_t *)buf, PAGE_SIZE);
-
-	const int exe_fd = write_exe(elf, elf_sz, options.savefile);
-
-	free(elf);
-
-	const pid_t tracee = fork();
-
-	if (tracee < 0) {
-		perror("fork");
-		exit(EXIT_FAILURE);
-	} else if (tracee == 0) {
-		ptrace_child(exe_fd);
-		abort();
-	}
-
-	// Parent
-	close(exe_fd);
-
-	return tracee;
-}
-
 void interact(
 		const char *const argv_0)
 {
@@ -150,7 +124,7 @@ void interact(
 
 	el_set(el, EL_HIST, history, hist);
 
-	const pid_t child_pid = _gen_child();
+	const pid_t child_pid = gen_child();
 
 	verbose_printf("child process is %d\n", child_pid);
 

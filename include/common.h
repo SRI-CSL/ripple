@@ -139,3 +139,6 @@ void dump(
 		const uint8_t *const,
 		const size_t,
 		const unsigned long long);
+
+int64_t parse2int(
+		  const char *const);

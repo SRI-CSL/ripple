@@ -149,3 +149,24 @@ void dump(
 		printf("\n");
 	}
 }
+
+/* try and parse the string as hex or decimal, then give up */
+int64_t parse2int(
+		  const char *const arg)
+{
+  char* end = NULL;
+  int64_t val;
+
+  if(arg == NULL)
+    return 0;
+
+  val = strtol(arg, &end, 10);
+  if(end != NULL && *end == '\0')
+    return val; 
+
+  val = strtol(arg, &end, 16);
+  if(end != NULL && *end == '\0')
+    return val; 
+
+  return 0;		
+}

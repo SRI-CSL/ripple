@@ -13,6 +13,7 @@
 #include "elf_gen.h"
 #include "exedir.h"
 #include "ptrace.h"
+#include "child.h"
 
 #include "binary.h"
 
@@ -22,33 +23,6 @@
 extern struct options_t options;
 
 //duplicate code needs a shared home.
-static const
-pid_t _gen_child() {
-	uint8_t buf[PAGE_SIZE];
-	mem_assign(buf, PAGE_SIZE, TRAP, TRAP_SZ);
-
-	uint8_t *elf;
-	const size_t elf_sz = gen_elf(&elf, options.start, (uint8_t *)buf, PAGE_SIZE);
-
-	const int exe_fd = write_exe(elf, elf_sz, options.savefile);
-
-	free(elf);
-
-	const pid_t tracee = fork();
-
-	if (tracee < 0) {
-		perror("fork");
-		exit(EXIT_FAILURE);
-	} else if (tracee == 0) {
-		ptrace_child(exe_fd);
-		abort();
-	}
-
-	// Parent
-	close(exe_fd);
-
-	return tracee;
-}
 
 
 void binary_mode()
@@ -82,7 +56,7 @@ void binary_mode()
 	verbose_dump(bytecode, bytecode_sz, -1);
 
 
-	const pid_t child_pid = _gen_child();
+	const pid_t child_pid = gen_child();
 
 	verbose_printf("child process is %d\n", child_pid);
 

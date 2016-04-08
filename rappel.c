@@ -73,10 +73,12 @@ void parse_opts(
       options.binary = optarg;
       break;
     case 'o':
-      options.offset = atol(optarg);
+      options.offset = parse2int(optarg);
+      fprintf(stderr, "offset: %s %zu\n", optarg, options.offset);
       break;
     case 'c':
-      options.count =  atol(optarg);
+      options.count =  parse2int(optarg);
+      fprintf(stderr, "count: %s %zu\n", optarg, options.count);
       break;
     default:
       exit(EXIT_FAILURE);

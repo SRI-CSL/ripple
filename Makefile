@@ -17,7 +17,7 @@ LDFLAGS =
 INC = -Iinclude/ 
 LIBS = -ledit
 
-SRC = rappel.c exedir.c common.c ptrace.c ui.c pipe.c binary.c
+SRC = rappel.c exedir.c common.c ptrace.c ui.c pipe.c binary.c child.c
 SRC_ARCH = arch/${ARCH}/elf.c arch/${ARCH}/display.c arch/${ARCH}/assemble.c
 
 ALL_SRC = $(SRC) $(SRC_ARCH)
