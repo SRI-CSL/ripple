@@ -8,10 +8,15 @@ CFLAGS_x86_64 =
 CFLAGS_i386   = -m32
 CFLAGS_armv7l = 
 
-CFLAGS = -std=c11 -Wall -pedantic -Wno-gnu-empty-initializer $(CFLAGS_$(ARCH)) -O2 -fPIE -D_FORTIFY_SOURCE=2
+CFLAGS = -std=c11 -Wall -pedantic -Wno-gnu-empty-initializer -O2 -fPIE -D_FORTIFY_SOURCE=2
 LDFLAGS = 
 INC = -Iinclude/ -Iarch/${ARCH} 
 LIBS = -ledit
+
+ifeq ($(ARCH), i386)
+	CFLAGS+=-m32
+endif
+
 
 SRC = src/rappel.c src/exedir.c src/common.c src/ptrace.c src/ui.c src/pipe.c src/binary.c src/child.c
 SRC_ARCH = arch/${ARCH}/elf.c arch/${ARCH}/display.c arch/${ARCH}/assemble.c arch/${ARCH}/ptrace_reset.c
