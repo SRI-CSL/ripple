@@ -35,45 +35,6 @@ struct options_t {
 #define REGFMT16 "0x%04"  PRIx16
 #define REGFMT8  "0x%02"  PRIx8
 
-struct proc_info_t {
-	pid_t pid;
-
-#if defined(__amd64__)
-    struct user_regs_struct_amd64 regs_struct;
-    struct user_regs_struct_amd64 old_regs_struct;
-	struct iovec regs;
-
-    struct user_fpregs_struct_amd64 fpregs_struct;
-    struct user_fpregs_struct_amd64 old_fpregs_struct;
-	struct iovec fpregs;
-#elif defined(__i386__)
-    struct user_regs_struct_x86 regs_struct;
-    struct user_regs_struct_x86 old_regs_struct;
-	struct iovec regs;
-
-    struct user_fpregs_struct_x86 fpregs_struct;
-    struct user_fpregs_struct_x86 old_fpregs_struct;
-	struct iovec fpregs;
-
-	struct user_fpxregs_struct_x86 fpxregs_struct;
-	struct user_fpxregs_struct_x86 old_fpxregs_struct;
-	struct iovec fpxregs;
-#elif defined(__arm__)
-    struct user_regs_arm regs_struct;
-    struct user_regs_arm old_regs_struct;
-	struct iovec regs;
-
-    struct user_fpregs_arm fpregs_struct;
-    struct user_fpregs_arm old_fpregs_struct;
-	struct iovec fpregs;
-#else
-#error "No proc_info_t for architecture"
-#endif
-
-	int sig;
-	long exit_code;
-};
-
 void mem_assign(
 		uint8_t *,
 		const size_t,

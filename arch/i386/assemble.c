@@ -15,6 +15,8 @@
 
 extern struct options_t options;
 
+#define BITSTR "[bits 32]\n"
+
 static 
 void _child(
 		const int fildes[2],
