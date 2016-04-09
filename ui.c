@@ -16,6 +16,7 @@
 #include "elf_gen.h"
 #include "ptrace.h"
 #include "child.h"
+#include "binary.h"
 
 #include "ui.h"
 
@@ -112,43 +113,44 @@ void ui_execute(
 		const pid_t child_pid,
 		const char *line)
 {
-	char *dupline = strdup(line);
+  char *dupline = strdup(line);
 
-	if (!dupline) {
-		perror("strdup");
-		return;
-	}
+  if (!dupline) {
+    perror("strdup");
+    return;
+  }
+  
+  fprintf(stderr, "line = %s\n", line);
+  
+  char *saveptr;
+  
+  const char *cmdread = strtok_r(dupline, " \t\n", &saveptr);
+  
+  if (!cmdread || strcasecmp(cmdread, ".execute"))
+    goto bail;
+  
+  const char *binary = strtok_r(NULL, " \t\n", &saveptr);
+  
+  if(binary == NULL)
+    goto bail;
+  
+  const char* offsetstr =  strtok_r(NULL, " \t\n", &saveptr);
+  
+  if(offsetstr == NULL)
+    goto bail;
 
-	fprintf(stderr, "line = %s\n", line);
-
-	char *saveptr;
-
-	const char *cmdread = strtok_r(dupline, " ", &saveptr);
-
-	if (!cmdread || strcasecmp(cmdread, ".execute"))
-		goto bail;
-
-	const char *binary = strtok_r(NULL, " ", &saveptr);
-
-	if(binary == NULL)
-	  goto bail;
-	
-	const char* offsetstr =  strtok_r(NULL, " ", &saveptr);
-
-	if(offsetstr == NULL)
-	  goto bail;
-
-	const char* bytesstr =  strtok_r(NULL, " ", &saveptr);
-
-	if(bytesstr == NULL)
-	  goto bail;
-
-	
-
-
+  const char* bytesstr =  strtok_r(NULL, " \t\n", &saveptr);
+  
+  if(bytesstr == NULL)
+    goto bail;
+  
+  
+  exec_binary(child_pid, binary, offsetstr, bytesstr);
+  
+  
  bail:
-	free(dupline);
-
+  free(dupline);
+  
 }
 
 void interact(
@@ -160,7 +162,7 @@ void interact(
 
 	History *const hist = history_init();
 	if (!hist) {
-		fprintf(stderr, "Could not initalize history\n");
+		fprintf(stderr, "Could not initialize history\n");
 		exit(EXIT_FAILURE);
 	}
 

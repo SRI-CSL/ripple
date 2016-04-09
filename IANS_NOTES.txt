@@ -5,3 +5,5 @@ all of the text segment ...
 just main
 ./bin/rappel -v -b ../DoubleHelix/Examples/minimal/mini -o 1270 -c  30
 
+.execute ../DoubleHelix/Examples/minimal/mini 1270 30
+

@@ -140,5 +140,5 @@ void dump(
 		const size_t,
 		const unsigned long long);
 
-int64_t parse2int(
+uint64_t parse2uint64(
 		  const char *const);
