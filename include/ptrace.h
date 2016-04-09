@@ -12,15 +12,8 @@ int ptrace_read(
 		void *const,
 		const size_t);
 
-void ptrace_reset_amd64(
-		const pid_t child_pid,
-		const unsigned long start);
-
-void ptrace_reset_x86(
-		const pid_t child_pid,
-		const unsigned long start);
-
-void ptrace_reset_arm(
+//now defined in arch/${ARCH}/ptrace_reset.c
+void ptrace_reset(
 		const pid_t child_pid,
 		const unsigned long start);
 

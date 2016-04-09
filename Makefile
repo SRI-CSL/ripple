@@ -4,13 +4,10 @@ ifeq ($(ARCH), i686)
 	ARCH=i386
 endif
 
-CFLAGS_x86_64 = -Dptrace_reset=ptrace_reset_amd64 \
-		-DREGFMT=REGFMT64 -DARCH_INIT_PROC_INFO=AMD64_INIT_PROC_INFO
-CFLAGS_i386   = -Dptrace_reset=ptrace_reset_x86 \
-		-DREGFMT=REGFMT32 -DARCH_INIT_PROC_INFO=X86_INIT_PROC_INFO \
+CFLAGS_x86_64 = -DREGFMT=REGFMT64 -DARCH_INIT_PROC_INFO=AMD64_INIT_PROC_INFO
+CFLAGS_i386   = -DREGFMT=REGFMT32 -DARCH_INIT_PROC_INFO=X86_INIT_PROC_INFO \
 		-m32
-CFLAGS_armv7l = -Dptrace_reset=ptrace_reset_arm \
-		-DREGFMT=REGFMT32 -DARCH_INIT_PROC_INFO=ARM_INIT_PROC_INFO
+CFLAGS_armv7l = -DREGFMT=REGFMT32 -DARCH_INIT_PROC_INFO=ARM_INIT_PROC_INFO
 
 CFLAGS = -std=c11 -Wall -pedantic -Wno-gnu-empty-initializer $(CFLAGS_$(ARCH)) -O2 -fPIE -D_FORTIFY_SOURCE=2
 LDFLAGS = 
@@ -18,7 +15,7 @@ INC = -Iinclude/
 LIBS = -ledit
 
 SRC = rappel.c exedir.c common.c ptrace.c ui.c pipe.c binary.c child.c
-SRC_ARCH = arch/${ARCH}/elf.c arch/${ARCH}/display.c arch/${ARCH}/assemble.c
+SRC_ARCH = arch/${ARCH}/elf.c arch/${ARCH}/display.c arch/${ARCH}/assemble.c arch/${ARCH}/ptrace_reset.c
 
 ALL_SRC = $(SRC) $(SRC_ARCH)
 
