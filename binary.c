@@ -22,8 +22,21 @@
 
 extern struct options_t options;
 
-//duplicate code needs a shared home.
 
+
+void exec_binary(const pid_t pid, const char *binary, const char *offsetstr, const char *bytesstr)
+{
+  if((options.bytesstr == NULL) || (options.bytesstr == NULL)){
+    if(options.count == 0){
+      fprintf(stderr, "Need to use -c and -o in conjunction with -b\n");
+      return;
+    }
+  }
+
+
+    //parse2int(optarg);
+
+}
 
 void binary_mode()
 {

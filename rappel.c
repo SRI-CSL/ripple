@@ -18,8 +18,8 @@ struct options_t options = {
 	.allregs = 0,
 	.savefile = NULL,
 	.binary = NULL,
-	.offset = 0,
-	.count = 0
+	.offsetstr = NULL,
+	.bytesstr = NULL
 };
 
 
@@ -73,27 +73,15 @@ void parse_opts(
       options.binary = optarg;
       break;
     case 'o':
-      options.offset = parse2int(optarg);
-      fprintf(stderr, "offset: %s %zu\n", optarg, options.offset);
+      options.offsetstr = optarg;
       break;
     case 'c':
-      options.count =  parse2int(optarg);
-      fprintf(stderr, "count: %s %zu\n", optarg, options.count);
+      options.bytesstr =  optarg;
       break;
     default:
       exit(EXIT_FAILURE);
     }
 
-  if((options.binary != NULL) || (options.count != 0) || (options.offset != 0)){
-    if(options.count == 0){
-      fprintf(stderr, "Need to use -c (and probably -o) in conjunction with -b\n");
-      exit(EXIT_FAILURE);
-    }
-    if(options.binary == 0){
-      fprintf(stderr, "Need to use -b in conjunction with -c or -o\n");
-      exit(EXIT_FAILURE);
-    }
-  }
   
 
 }

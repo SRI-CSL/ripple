@@ -34,8 +34,8 @@ struct options_t {
   int passsig;
   const char *savefile;
   const char *binary;
-  off_t offset;
-  size_t count;
+  const char *offsetstr;
+  const char *bytesstr;
 };
 
 #define REGFMT64 "0x%016" PRIx64

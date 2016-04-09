@@ -106,6 +106,51 @@ bail:
 	free(dupline);
 }
 
+
+static
+void ui_execute(
+		const pid_t child_pid,
+		const char *line)
+{
+	char *dupline = strdup(line);
+
+	if (!dupline) {
+		perror("strdup");
+		return;
+	}
+
+	fprintf(stderr, "line = %s\n", line);
+
+	char *saveptr;
+
+	const char *cmdread = strtok_r(dupline, " ", &saveptr);
+
+	if (!cmdread || strcasecmp(cmdread, ".execute"))
+		goto bail;
+
+	const char *binary = strtok_r(NULL, " ", &saveptr);
+
+	if(binary == NULL)
+	  goto bail;
+	
+	const char* offsetstr =  strtok_r(NULL, " ", &saveptr);
+
+	if(offsetstr == NULL)
+	  goto bail;
+
+	const char* bytesstr =  strtok_r(NULL, " ", &saveptr);
+
+	if(bytesstr == NULL)
+	  goto bail;
+
+	
+
+
+ bail:
+	free(dupline);
+
+}
+
 void interact(
 		const char *const argv_0)
 {
@@ -184,6 +229,11 @@ void interact(
 			if (strcasestr(line, "read")) {
 				ui_read(child_pid, line);
 				continue;
+			}
+
+			if (strcasestr(line, "execute")) {
+			  ui_execute(child_pid, line);
+			  continue;
 			}
 
 			if (strcasestr(line, "write")) {
