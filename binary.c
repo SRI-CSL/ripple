@@ -23,12 +23,14 @@
 extern struct options_t options;
 
 
-
-void exec_binary(const pid_t pid, const char *binary, const char *offsetstr, const char *bytesstr)
+/* returns true if the child died  */
+bool exec_binary(const pid_t pid, const char *binary, const char *offsetstr, const char *bytesstr)
 {
+  bool fatal = false;
+  
   if((bytesstr == NULL) || (offsetstr == NULL)){
     fprintf(stderr, "Need to use -c and -o in conjunction with -b\n");
-    return;
+    return fatal;
   }
 
   //cleaner to unfold these?
@@ -36,7 +38,7 @@ void exec_binary(const pid_t pid, const char *binary, const char *offsetstr, con
 
   //cleaner to unfold these?
   const size_t bytes = parse2uint64(bytesstr);
-  if(bytes == 0){ return; }
+  if(bytes == 0){ return fatal; }
 
   uint8_t *const bytecode = xmalloc(bytes);
 
@@ -44,12 +46,12 @@ void exec_binary(const pid_t pid, const char *binary, const char *offsetstr, con
 
   if(fd == -1){
     perror("Had trouble opening the binary:");
-    exit(EXIT_FAILURE);
+    return fatal;
   }
   
   if(lseek(fd, offset, SEEK_SET) == -1){
     perror("Had trouble setting the offset in the binary:");
-    exit(EXIT_FAILURE);
+    return fatal;
   }
   
   const size_t bytecode_sz = read_data(fd, bytecode, bytes);
@@ -57,7 +59,7 @@ void exec_binary(const pid_t pid, const char *binary, const char *offsetstr, con
 
   if (bytecode_sz != bytes) {
     fprintf(stderr, "Could not read that many bytes (desired: %zu vs actual: %zu)...\n", bytes, bytecode_sz);
-    exit(EXIT_FAILURE);
+    return fatal;
   }
   
   verbose_printf("Got assembly:\n");
@@ -79,27 +81,25 @@ void exec_binary(const pid_t pid, const char *binary, const char *offsetstr, con
     display(&info);
   }  
   
-  
-
-
-  
   ptrace_write(child_pid, (void *)options.start, bytecode, bytecode_sz);
     
   ptrace_reset(child_pid, options.start);
   
   ptrace_cont(child_pid, &info);
   
-  int child_died = 0;
+
 
   if(ptrace_reap(child_pid, &info))
-    child_died = 1;
+    fatal = true;
 
-  if( !pid && !child_died)
+  if( !pid && !fatal)
     ptrace_detatch(child_pid, &info);
   
   display(&info);
   
   free(bytecode);
+
+  return fatal;
   
 }
 

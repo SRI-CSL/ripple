@@ -109,18 +109,17 @@ bail:
 
 
 static
-void ui_execute(
+bool ui_execute(
 		const pid_t child_pid,
 		const char *line)
 {
   char *dupline = strdup(line);
-
+  bool fatal = false;
+  
   if (!dupline) {
     perror("strdup");
-    return;
+    return fatal;
   }
-  
-  fprintf(stderr, "line = %s\n", line);
   
   char *saveptr;
   
@@ -145,11 +144,15 @@ void ui_execute(
     goto bail;
   
   
-  exec_binary(child_pid, binary, offsetstr, bytesstr);
+  fatal = exec_binary(child_pid, binary, offsetstr, bytesstr);
   
   
  bail:
   free(dupline);
+
+  return fatal;
+  
+
   
 }
 
@@ -179,7 +182,8 @@ void interact(
 
 	char buf[PAGE_SIZE];
 	size_t buf_sz = 0;
-	int end = 0, child_died = 0;
+	int end = 0;
+	bool child_died = false0;
 
 	struct proc_info_t info = {};
 	ARCH_INIT_PROC_INFO(info);
@@ -234,8 +238,11 @@ void interact(
 			}
 
 			if (strcasestr(line, "execute")) {
-			  ui_execute(child_pid, line);
-			  continue;
+			  child_died = ui_execute(child_pid, line);
+			  if(child_died)
+			    break;
+			  else 
+			    continue;
 			}
 
 			if (strcasestr(line, "write")) {
@@ -289,8 +296,8 @@ void interact(
 			ptrace_cont(child_pid, &info);
 
 			if (ptrace_reap(child_pid, &info)) {
-				child_died = 1;
-				break;
+			  child_died = true;
+			  break;
 			}
 
 			display(&info);
