@@ -1,3 +1,15 @@
+TO DO:
+
+test on:
+
+i386
+
+arm
+
+
+
+Cheat sheet:
+
 all of the text segment ...
 
 ./bin/rappel -v -b ../DoubleHelix/Examples/minimal/mini -o 1024 -c  402

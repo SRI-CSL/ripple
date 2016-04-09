@@ -7,6 +7,7 @@
 #include <sys/uio.h>
 
 #include "user.h"
+#include "user_arch.h"
 
 #define REQUIRE(x) \
 	do {\
@@ -16,15 +17,6 @@
 		}\
 	} while (0)
 
-#if defined(__amd64__) || defined(__i386__)
-#define TRAP 0xcc // int3
-#define TRAP_SZ 1
-#elif defined(__arm__)
-#define TRAP 0xe1200070
-#define TRAP_SZ 4
-#else
-#error "No trap for architecture"
-#endif
 
 struct options_t {
   unsigned long start;
@@ -42,25 +34,6 @@ struct options_t {
 #define REGFMT32 "0x%08"  PRIx32
 #define REGFMT16 "0x%04"  PRIx16
 #define REGFMT8  "0x%02"  PRIx8
-
-#define AMD64_INIT_PROC_INFO(i) \
-	do {\
-		i.regs   = (struct iovec) { .iov_base = &i.regs_struct,   .iov_len = sizeof(i.regs_struct) }; \
-		i.fpregs = (struct iovec) { .iov_base = &i.fpregs_struct, .iov_len = sizeof(i.fpregs_struct) }; \
-	} while (0)
-
-#define X86_INIT_PROC_INFO(i) \
-	do {\
-		i.regs    = (struct iovec) { .iov_base = &i.regs_struct,    .iov_len = sizeof(i.regs_struct) }; \
-		i.fpregs  = (struct iovec) { .iov_base = &i.fpregs_struct,  .iov_len = sizeof(i.fpregs_struct) }; \
-		i.fpxregs = (struct iovec) { .iov_base = &i.fpxregs_struct, .iov_len = sizeof(i.fpxregs_struct) }; \
-	} while (0)
-
-#define ARM_INIT_PROC_INFO(i) \
-	do {\
-		i.regs   = (struct iovec) { .iov_base = &i.regs_struct,   .iov_len = sizeof(i.regs_struct) }; \
-		i.fpregs = (struct iovec) { .iov_base = &i.fpregs_struct, .iov_len = sizeof(i.fpregs_struct) }; \
-	} while (0)
 
 struct proc_info_t {
 	pid_t pid;
