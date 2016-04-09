@@ -14,7 +14,7 @@
 
 
 
-/* These are the 32-bit x86 structures.  */
+//iam: not clear these are needed now.
 struct user_fpregs_struct_x86
 {
   long int cwd;

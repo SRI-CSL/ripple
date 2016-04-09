@@ -12,6 +12,7 @@
 	} while (0)
 
 
+//iam: not clear these are needed now.
 struct user_regs_arm
 {
 	  unsigned long int uregs[18];

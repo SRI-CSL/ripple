@@ -12,6 +12,7 @@
 	} while (0)
 
 
+//iam: not clear these are needed now.
 struct user_fpregs_struct_amd64
 {
   unsigned short int	cwd;
