@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -181,7 +182,7 @@ void interact(
 	char buf[PAGE_SIZE];
 	size_t buf_sz = 0;
 	int end = 0;
-	bool child_died = false0;
+	bool child_died = false;
 
 	struct proc_info_t info = {};
 	ARCH_INIT_PROC_INFO(info);

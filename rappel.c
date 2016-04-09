@@ -1,7 +1,7 @@
 #include <getopt.h>
 #include <signal.h>
 #include <unistd.h>
-
+#include <stdbool.h>
 #include <sys/wait.h>
 
 #include "common.h"
