@@ -13,12 +13,12 @@ LDFLAGS =
 INC = -Iinclude/ -Iarch/${ARCH} 
 LIBS = -ledit
 
-SRC = rappel.c exedir.c common.c ptrace.c ui.c pipe.c binary.c child.c
+SRC = src/rappel.c src/exedir.c src/common.c src/ptrace.c src/ui.c src/pipe.c src/binary.c src/child.c
 SRC_ARCH = arch/${ARCH}/elf.c arch/${ARCH}/display.c arch/${ARCH}/assemble.c arch/${ARCH}/ptrace_reset.c
 
 ALL_SRC = $(SRC) $(SRC_ARCH)
 
-OBJ = $(patsubst %.c, obj/%.o, $(SRC))
+OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
 
 OBJ_ARCH = $(patsubst arch/${ARCH}/%.c, obj/%.o, $(SRC_ARCH))
 
@@ -43,7 +43,7 @@ $(TARGET): $(ALL_OBJ) | bin
 obj:
 	mkdir -p obj
 
-obj/%.o: %.c | obj
+obj/%.o: src/%.c | obj
 	$(CC) $(CFLAGS) $(INC) -c $<  -o $@
 
 obj/%.o: arch/${ARCH}/%.c | obj
