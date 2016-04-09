@@ -2,7 +2,7 @@ TO DO:
 
 test on:
 
-i386
+i386 runs ok, REGFMT generates warnings in ptrace (as it does in the yrp604 branch).
 
 arm
 
