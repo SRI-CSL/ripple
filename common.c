@@ -150,7 +150,7 @@ void dump(
 	}
 }
 
-/* try and parse the string as hex or decimal, then give up */
+/* try and parse the string as decimal, then as hex, then give up */
 uint64_t parse2uint64(
 		  const char *const arg)
 {
@@ -160,11 +160,21 @@ uint64_t parse2uint64(
   if(arg == NULL)
     return 0;
 
+  errno = 0;
   val = strtoul(arg, &end, 10);
+  if (val == ULONG_MAX && errno) {
+    perror("strtoul: ");
+    return 0;
+  }
   if(end != NULL && *end == '\0')
     return val; 
 
+  errno = 0;
   val = strtoul(arg, &end, 16);
+  if (val == ULONG_MAX && errno) {
+    perror("strtoul: ");
+    return 0;
+  }
   if(end != NULL && *end == '\0')
     return val; 
 

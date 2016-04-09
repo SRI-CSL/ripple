@@ -152,8 +152,6 @@ bool ui_execute(
 
   return fatal;
   
-
-  
 }
 
 void interact(
