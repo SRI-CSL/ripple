@@ -19,3 +19,21 @@ just main
 
 .execute ../DoubleHelix/Examples/minimal/mini 1270 30
 
+
+.begin
+mov rax, 0x5555
+sub rsp, 48
+mov rdi, rsp
+mov rcx, 3
+rep stosq
+.end
+
+.begin
+mov rax, 0x66
+sub rsp, 48
+mov rdi, rsp
+mov rcx, 48
+rep stosb
+.end
+
+
