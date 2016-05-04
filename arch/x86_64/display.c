@@ -36,13 +36,13 @@ void display(
 	PRINTREG64("r15: ", r15, regs, old_regs, "\n");
 
 	if (options.allregs) {
-		PRINTREG64("cs: ", cs, regs, old_regs, "\t");
-		PRINTREG64("ss: ", ss, regs, old_regs, "\t");
-		PRINTREG64("ds: ",ds, regs, old_regs, "\n");
+		PRINTREG64("cs : ", cs, regs, old_regs, "\t");
+		PRINTREG64("ss : ", ss, regs, old_regs, "\t");
+		PRINTREG64("ds : ",ds, regs, old_regs, "\n");
 
-		PRINTREG64("es: ", es, regs, old_regs, "\t");
-		PRINTREG64("fs: ", fs, regs, old_regs, "\t");
-		PRINTREG64("gs: ", gs, regs, old_regs, "\n");
+		PRINTREG64("es : ", es, regs, old_regs, "\t");
+		PRINTREG64("fs : ", fs, regs, old_regs, "\t");
+		PRINTREG64("gs : ", gs, regs, old_regs, "\n");
 	}
 
 	PRINTREG64("rip: ", rip, regs, old_regs, "\t");
@@ -51,20 +51,17 @@ void display(
 
 	PRINTREG64("flags: ", eflags, regs, old_regs, " ");
 
-	const uint8_t of = (regs->eflags & 2048) >> 11;
-	const uint8_t old_of = (old_regs->eflags & 2048) >> 11;
+	const uint8_t of = (regs->eflags & 0x800) >> 11;
+	const uint8_t old_of = (old_regs->eflags & 0x800) >> 11;
 
-	const uint8_t df = (regs->eflags & 1024) >> 10;
-	const uint8_t old_df = (old_regs->eflags & 1024) >> 10;
+	const uint8_t df = (regs->eflags & 0x400) >> 10;
+	const uint8_t old_df = (old_regs->eflags & 0x400) >> 10;
 
-	const uint8_t sf = (regs->eflags & 128) >> 7;
-	const uint8_t old_sf = (regs->eflags & 128) >> 7;
+	const uint8_t sf = (regs->eflags & 0x80) >> 7;
+	const uint8_t old_sf = (regs->eflags & 0x80) >> 7;
 
-	const uint8_t zf = (regs->eflags & 64) >> 6;
-	const uint8_t old_zf = (old_regs->eflags & 64) >> 6;
-
-	const uint8_t af = (regs->eflags & 16) >> 4;
-	const uint8_t old_af = (old_regs->eflags & 16) >> 4;
+	const uint8_t zf = (regs->eflags & 0x40) >> 6;
+	const uint8_t old_zf = (old_regs->eflags & 0x40) >> 6;
 
 	const uint8_t pf = (regs->eflags & 4) >> 2;
 	const uint8_t old_pf = (old_regs->eflags & 4) >> 2;
@@ -79,7 +76,7 @@ void display(
 	PRINTBIT("sf:", sf, old_sf, ", ");
 	PRINTBIT("pf:", pf, old_pf, ", ");
 	PRINTBIT("af:", af, old_af, ", ");
-	PRINTBIT("df:", df, old_df, "");
+	PRINTBIT("df:", df, old_df, ", ");
 	printf("]\n");
 
 	if (options.allregs) {
