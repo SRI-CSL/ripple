@@ -63,6 +63,9 @@ void display(
 	const uint8_t zf = (regs->eflags & 0x40) >> 6;
 	const uint8_t old_zf = (old_regs->eflags & 0x40) >> 6;
 
+	const uint8_t af = (regs->eflags & 16) >> 4;
+	const uint8_t old_af = (old_regs->eflags & 16) >> 4;
+ 
 	const uint8_t pf = (regs->eflags & 4) >> 2;
 	const uint8_t old_pf = (old_regs->eflags & 4) >> 2;
 
