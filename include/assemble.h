@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 
-const
+extern const
 size_t assemble(
 		uint8_t *const,
 		const size_t,

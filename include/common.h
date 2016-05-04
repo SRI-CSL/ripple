@@ -35,44 +35,51 @@ struct options_t {
 #define REGFMT16 "0x%04"  PRIx16
 #define REGFMT8  "0x%02"  PRIx8
 
+extern 
 void mem_assign(
 		uint8_t *,
 		const size_t,
 		const uint64_t,
 		const size_t);
 
+extern 
 void* xmalloc(
 		size_t);
 
+extern 
 void* xrealloc(
 		void *,
 		size_t);
 
-const
+extern const
 size_t read_data(
 		const int,
 		uint8_t *const,
 		const size_t);
 
-void write_data(
+extern void write_data(
 		const int,
 		const uint8_t *const,
 		const size_t);
 
 __attribute__ ((format (printf, 1, 2)))
+extern 
 void verbose_printf(
 		const char *const,
 		...);
 
+extern 
 void verbose_dump(
 		const uint8_t *const,
 		const size_t,
 		const unsigned long long);
 
+extern 
 void dump(
 		const uint8_t *const,
 		const size_t,
 		const unsigned long long);
 
+extern 
 uint64_t parse2uint64(
 		  const char *const);

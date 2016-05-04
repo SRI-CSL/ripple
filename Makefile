@@ -18,7 +18,7 @@ ifeq ($(ARCH), i386)
 endif
 
 
-SRC = src/rappel.c src/exedir.c src/common.c src/ptrace.c src/ui.c src/pipe.c src/binary.c src/child.c
+SRC = src/rappel.c src/exedir.c src/common.c src/ptrace.c src/ui.c src/pipe.c src/binary.c src/child.c src/teval.c
 SRC_ARCH = arch/${ARCH}/elf.c arch/${ARCH}/display.c arch/${ARCH}/assemble.c arch/${ARCH}/ptrace_reset.c
 
 ALL_SRC = $(SRC) $(SRC_ARCH)
