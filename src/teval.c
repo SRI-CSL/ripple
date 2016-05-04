@@ -41,6 +41,8 @@ bool teval(const pid_t pid,  const char *tfile)
   
   ARCH_INIT_PROC_INFO(info);
 
+  info.pid = pid;
+
   bool ok = parse_teval_file(tfile);
 
   if(ok){
@@ -143,6 +145,10 @@ static char* register_slots[] =
     NULL
   };
 
+static inline void set_reg_slot(struct user_regs_struct_amd64* regs, int slot,  const uint64_t val){
+  const uintptr_t slotptr = (uintptr_t)(regs) + sizeof(unsigned long long int) * slot;
+  *(unsigned long long int *)slotptr = val;
+}
 
 
 static bool parse_teval_cmd(const char *lhs, const char *rhs){
@@ -185,10 +191,8 @@ static bool parse_teval_cmd(const char *lhs, const char *rhs){
       }
       
       const uint64_t val = parse2uint64(rhs);
-      const uintptr_t slot = (uintptr_t)(&info.regs_struct) + sizeof(unsigned long long int) * index;
-      *(unsigned long long int *)slot = val;
 
-      fprintf(stderr, "Saw reg[%d] called %s with string %s and value %" PRIu64 " (lhs = %s)\n", index, regname, rhs, val, lhs);
+      set_reg_slot(&info.regs_struct, index,  val);
       
       return true;
     }
