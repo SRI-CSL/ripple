@@ -15,6 +15,7 @@
 
 
 //iam: not clear these are needed now.
+// i suppose they are if you wanna do "ARCH=x86_64 CC=clang make" etc
 struct user_fpregs_struct_x86
 {
   long int cwd;

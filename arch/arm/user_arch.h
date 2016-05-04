@@ -13,6 +13,7 @@
 
 
 //iam: not clear these are needed now.
+// i suppose they are if you wanna do "ARCH=i386 CC=clang make" etc
 struct user_regs_arm
 {
 	  unsigned long int uregs[18];

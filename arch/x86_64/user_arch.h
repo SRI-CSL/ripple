@@ -13,6 +13,7 @@
 
 
 //iam: not clear these are needed now.
+// i suppose they are if you wanna do "ARCH=i386 CC=clang make" etc
 struct user_fpregs_struct_amd64
 {
   unsigned short int	cwd;
