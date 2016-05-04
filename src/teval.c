@@ -16,6 +16,7 @@
 
 #include "user.h"
 #include "common.h"
+#include "display.h"
 
 
 extern struct options_t options;
@@ -44,8 +45,7 @@ bool teval(const pid_t pid,  const char *tfile)
 
   if(ok){
 
-
-
+    display(&info);
 
 
   }
@@ -185,16 +185,11 @@ static bool parse_teval_cmd(const char *lhs, const char *rhs){
       }
       
       const uint64_t val = parse2uint64(rhs);
-      /*
       const uintptr_t slot = (uintptr_t)(&info.regs_struct) + sizeof(unsigned long long int) * index;
       *(unsigned long long int *)slot = val;
-      */
-
 
       fprintf(stderr, "Saw reg[%d] called %s with string %s and value %" PRIu64 " (lhs = %s)\n", index, regname, rhs, val, lhs);
       
-      
-
       return true;
     }
   }
