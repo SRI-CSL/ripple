@@ -24,23 +24,25 @@
 
 extern struct options_t options;
 
-static struct proc_info_t info = {};
 
 #define MAX_INSTRUCTION_LENGTH   64
+
 // we will read that values into &info->regs_struct
 // and the instruction into tinstr[64]
 static char tinstr[MAX_INSTRUCTION_LENGTH];
 
-static bool parse_teval_file(const char *tfile);
+static bool parse_teval_file(const char *tfile, struct proc_info_t *const info);
 
-static bool parse_teval_line(const char *line);
+static bool parse_teval_line(const char *line, struct proc_info_t *const info);
 
-static bool parse_teval_cmd(const char *lhs, const char *rhs);
+static bool parse_teval_cmd(const char *lhs, const char *rhs, struct proc_info_t *const info);
 
 /* returns true if the child died  */
-bool teval(const pid_t child_pid,  const char *tfile)
+bool teval(const pid_t child_pid,  const char *tfilein,  const char *tfileout)
 {
   bool fatal = false;
+
+  struct proc_info_t info = {};
 
   /* might not be the first call */
   memset(&info, 0, sizeof(info));
@@ -53,11 +55,11 @@ bool teval(const pid_t child_pid,  const char *tfile)
   info.exit_code = -1;
 
   
-  bool ok = parse_teval_file(tfile);
+  bool ok = parse_teval_file(tfilein, &info);
 
   if(ok){
 
-    display(&info);
+    //display(&info);
 
     const size_t tinstr_sz = strlen(tinstr);
 
@@ -78,8 +80,7 @@ bool teval(const pid_t child_pid,  const char *tfile)
 
     ptrace_reset(child_pid, options.start, &info);
 
-    //ptrace_set(child_pid, options.start, &info);
-
+    /* just for debugging */
     ptrace_peek(child_pid);
 
     ptrace_cont(child_pid, &info);
@@ -89,6 +90,11 @@ bool teval(const pid_t child_pid,  const char *tfile)
     }
     
     display(&info);
+
+    if( ! info2file(tfileout, &info) ){
+      
+    }
+
     
   }
   
@@ -96,7 +102,7 @@ bool teval(const pid_t child_pid,  const char *tfile)
 }
 
 
-static bool parse_teval_file(const char *tfile){
+static bool parse_teval_file(const char *tfile, struct proc_info_t *const info){
   char * line = NULL;
   size_t len = 0;
   ssize_t read;
@@ -109,7 +115,7 @@ static bool parse_teval_file(const char *tfile){
   }
 
   while ((read = getline(&line, &len, fp)) != -1) {
-    if( !  parse_teval_line(line) ){
+    if( !  parse_teval_line(line, info) ){
       success = false;
       break;
     }
@@ -123,7 +129,7 @@ static bool parse_teval_file(const char *tfile){
 }
 
 
-static bool parse_teval_line(const char *line){
+static bool parse_teval_line(const char *line, struct proc_info_t *const info){
   bool success = false;
   char *dupline = strdup(line);
 
@@ -145,7 +151,7 @@ static bool parse_teval_line(const char *line){
   if (!rhs)
     goto bail;
 
-  success = parse_teval_cmd(lhs, rhs);
+  success = parse_teval_cmd(lhs, rhs, info);
 
  bail:
   free(dupline);
@@ -191,7 +197,7 @@ static inline void set_reg_slot(struct user_regs_struct_amd64* regs, int slot,  
 }
 
 
-static bool parse_teval_cmd(const char *lhs, const char *rhs){
+static bool parse_teval_cmd(const char *lhs, const char *rhs, struct proc_info_t *const info){
 
   //handle the instruction case
   if( !strcasecmp(lhs, "instr") ){
@@ -232,7 +238,7 @@ static bool parse_teval_cmd(const char *lhs, const char *rhs){
       
       const uint64_t val = parse2uint64(rhs);
 
-      set_reg_slot(&info.regs_struct, index,  val);
+      set_reg_slot(&info->regs_struct, index,  val);
       
       return true;
     }

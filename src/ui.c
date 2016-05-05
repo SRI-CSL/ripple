@@ -134,15 +134,25 @@ bool ui_teval(
     goto bail;
   }
 
-  const char *file_str = strtok_r(NULL, delimiters, &saveptr);
+  const char *filein_str = strtok_r(NULL, delimiters, &saveptr);
 
-  if (!file_str){
+  if (!filein_str){
     fprintf(stderr, ".teval requires an input file!\n");
     goto bail;
   }
 	
-  printf("teval gonna work on '%s'\n", file_str);
-  fatal = teval(child_pid, file_str);
+  const char *fileout_str = strtok_r(NULL, delimiters, &saveptr);
+
+  if (!fileout_str){
+    fprintf(stderr, ".teval requires an output file!\n");
+    goto bail;
+  }
+	
+  verbose_printf("teval gonna work on '%s' and write to '%s'\n", 
+		 filein_str, fileout_str);
+
+
+  fatal = teval(child_pid, filein_str, fileout_str);
 
  bail:
   free(dupline);

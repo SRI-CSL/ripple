@@ -4,12 +4,12 @@
 
 extern const
 bool file2info(
-	       const uint8_t *const,
-	       uint8_t **const,
+	       const char *const,
+	       char **const,
 	       struct proc_info_t *const);
 
 
 extern const
 bool info2file(
-	       const uint8_t *const,
+	       const char *const,
 	       const struct proc_info_t *const);
