@@ -19,6 +19,7 @@
 #include "assemble.h"
 #include "display.h"
 #include "ptrace.h"
+#include "testio.h"
 
 
 extern struct options_t options;
