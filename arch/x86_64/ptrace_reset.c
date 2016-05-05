@@ -33,8 +33,13 @@ void ptrace_set(
   
   regs_struct.rip = start;
   regs_struct.rax = info->regs_struct.rax;
-  //ok so this works so what is wrong with the rest of info->regs_struct?
-  
+  /*
+    ok so this works so what is wrong with the rest of info->regs_struct?
+    the man page says about PTRACE_SETREGS:
+
+    "As for PTRACE_POKEUSER, some general-purpose register
+    modifications may be disallowed."
+  */
   REQUIRE (ptrace(PTRACE_SETREGSET, child_pid, NT_PRSTATUS, &regs) == 0);
 
 }
