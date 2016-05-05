@@ -36,4 +36,12 @@ mov rcx, 48
 rep stosb
 .end
 
+Test Generation:
 
+Either
+
+>.teval tfile.in tfile.out
+
+Or:
+
+ >./bin/ripple -t tfile.in -o tfile.out
