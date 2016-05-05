@@ -16,7 +16,9 @@
 
 #include "user.h"
 #include "common.h"
+#include "assemble.h"
 #include "display.h"
+#include "ptrace.h"
 
 
 extern struct options_t options;
@@ -35,23 +37,58 @@ static bool parse_teval_line(const char *line);
 static bool parse_teval_cmd(const char *lhs, const char *rhs);
 
 /* returns true if the child died  */
-bool teval(const pid_t pid,  const char *tfile)
+bool teval(const pid_t child_pid,  const char *tfile)
 {
   bool fatal = false;
+
+  /* might not be the first call */
+  memset(&info, 0, sizeof(info));
+  
   
   ARCH_INIT_PROC_INFO(info);
 
-  info.pid = pid;
+  info.pid       = child_pid;
+  info.sig       = -1;
+  info.exit_code = -1;
 
+  
   bool ok = parse_teval_file(tfile);
 
   if(ok){
 
     display(&info);
 
+    const size_t tinstr_sz = strlen(tinstr);
 
+    verbose_printf("Trying to assemble(%zu):\n%s\n", tinstr_sz, tinstr);
+
+    uint8_t bytecode[PAGE_SIZE];
+    const size_t bytecode_sz = assemble(bytecode, sizeof(bytecode), tinstr, tinstr_sz);
+
+    verbose_printf("Got asm(%zu):\n", bytecode_sz);
+    verbose_dump(bytecode, bytecode_sz, -1);
+
+    if (!bytecode_sz) {
+      fprintf(stderr, "'%s' assembled to 0 length bytecode\n", tinstr);
+      return fatal;
+    }
+    
+    ptrace_write(child_pid, (void *)options.start, bytecode, bytecode_sz);
+
+    //ptrace_reset(child_pid, options.start);
+
+    ptrace_set(child_pid, options.start, &info);
+
+    ptrace_cont(child_pid, &info);
+
+    if (ptrace_reap(child_pid, &info)) {
+      fatal = true;
+    }
+    
+    display(&info);
+    
   }
-
+  
   return fatal;
 }
 

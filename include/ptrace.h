@@ -17,6 +17,14 @@ void ptrace_reset(
 		const pid_t child_pid,
 		const unsigned long start);
 
+//*new* defined in arch/${ARCH}/ptrace_reset.c
+void ptrace_set(
+		const pid_t child_pid,
+		const unsigned long start,
+		const struct proc_info_t *const info
+		);
+
+
 void ptrace_child(
 		const int);
 
