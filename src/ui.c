@@ -340,7 +340,7 @@ void interact(
       }
 
       ptrace_write(child_pid, (void *)options.start, bytecode, bytecode_sz);
-      ptrace_reset(child_pid, options.start);
+      ptrace_reset(child_pid, options.start, NULL);
 
       ptrace_cont(child_pid, &info);
 

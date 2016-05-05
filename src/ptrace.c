@@ -15,6 +15,7 @@
 
 #include "common.h"
 #include "ptrace.h"
+#include "display.h"
 
 extern struct options_t options;
 
@@ -61,6 +62,20 @@ void _exited_collect_regs(
 
 	REQUIRE (ptrace(PTRACE_GETEVENTMSG, child_pid, NULL, &info->exit_code) == 0);
 }
+
+void ptrace_peek(const pid_t child_pid){
+  struct proc_info_t info = {};
+  ARCH_INIT_PROC_INFO(info);
+  info.pid       = child_pid;
+  info.sig       = -1;
+  info.exit_code = -1;
+
+  _collect_regs(child_pid, &info);
+
+  display(&info);
+
+}
+
 
 const
 int ptrace_write(

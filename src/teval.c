@@ -43,8 +43,8 @@ bool teval(const pid_t child_pid,  const char *tfile)
 
   /* might not be the first call */
   memset(&info, 0, sizeof(info));
-  
-  
+  memset(&tinstr, 0, MAX_INSTRUCTION_LENGTH);
+
   ARCH_INIT_PROC_INFO(info);
 
   info.pid       = child_pid;
@@ -75,9 +75,11 @@ bool teval(const pid_t child_pid,  const char *tfile)
     
     ptrace_write(child_pid, (void *)options.start, bytecode, bytecode_sz);
 
-    //ptrace_reset(child_pid, options.start);
+    ptrace_reset(child_pid, options.start, &info);
 
-    ptrace_set(child_pid, options.start, &info);
+    //ptrace_set(child_pid, options.start, &info);
+
+    ptrace_peek(child_pid);
 
     ptrace_cont(child_pid, &info);
 

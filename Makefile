@@ -29,7 +29,7 @@ OBJ_ARCH = $(patsubst arch/${ARCH}/%.c, obj/%.o, $(SRC_ARCH))
 
 ALL_OBJ = $(OBJ) $(OBJ_ARCH)
 
-TARGET = bin/rappel
+TARGET = bin/ripple
 
 .PHONY: clean
 
@@ -57,5 +57,3 @@ obj/%.o: arch/${ARCH}/%.c | obj
 clean:
 	$(RM) obj/*.o *~ $(TARGET)
 
-uninstall:
-	$(RM) -rf ~/.rappel
