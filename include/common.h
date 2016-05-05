@@ -28,6 +28,8 @@ struct options_t {
   const char *binary;
   const char *offsetstr;
   const char *bytesstr;
+  const char *testin;
+  const char *testout;
 };
 
 #define REGFMT64 "0x%016" PRIx64

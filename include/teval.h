@@ -1,3 +1,5 @@
+extern void
+test_mode(void);
 
 extern bool 
 teval(

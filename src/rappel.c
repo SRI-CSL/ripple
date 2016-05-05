@@ -9,6 +9,7 @@
 #include "pipe.h"
 #include "binary.h"
 #include "ui.h"
+#include "teval.h"
 
 // Defaults
 struct options_t options = {
@@ -19,7 +20,9 @@ struct options_t options = {
 	.savefile = NULL,
 	.binary = NULL,
 	.offsetstr = NULL,
-	.bytesstr = NULL
+	.bytesstr = NULL,
+	.testin = NULL,
+	.testout = NULL
 };
 
 
@@ -36,8 +39,10 @@ void usage(
 			"\t-x\t\tDisplay all registers (FP)\n"
 			"\t-v\t\tIncrease verbosity\n"
 			"\t-b <binary>\t\tLoad from an binary (need to also use -c)\n"
-			"\t-o <offset>\t\toffset into the binary\n"
+			"\t-f <offset>\t\toffset into the binary\n"
 			"\t-c <bytes>\t\tnumber of bytes to read from the binary\n"
+			"\t-t <test input file>\t\texecute the test file (use -o to provide output file)\n"
+			"\t-o <test output file>\t\tstore the results of the execution of the test file\n"
 			, argv0);
 
 	exit(EXIT_FAILURE);
@@ -49,7 +54,7 @@ void parse_opts(
 		char **argv) {
   int c;
   
-  while ((c = getopt(argc, argv, "s:b:o:c:hrpvx")) != -1)
+  while ((c = getopt(argc, argv, "t:o:s:b:f:c:hrpvx")) != -1)
     switch (c) {
     case 'h':
       usage(argv[0]);
@@ -72,11 +77,17 @@ void parse_opts(
     case 'b':
       options.binary = optarg;
       break;
-    case 'o':
+    case 'f':
       options.offsetstr = optarg;
       break;
     case 'c':
       options.bytesstr =  optarg;
+      break;
+    case 't':
+      options.testin =  optarg;
+      break;
+    case 'o':
+      options.testout =  optarg;
       break;
     default:
       exit(EXIT_FAILURE);
@@ -92,8 +103,16 @@ int main(int argc, char **argv) {
 	clean_exedir();
 
 	parse_opts(argc, argv);
+	
+	if(options.testin || options.testout){
 
-	if (options.binary != NULL)
+	  if(options.testin && options.testout){
+	    test_mode();
+	  } else {
+	    usage(argv[0]);
+	  }
+
+	} else if (options.binary != NULL)
 	  binary_mode();
 	else if (isatty(STDIN_FILENO))
 	  interact(argv[0]);

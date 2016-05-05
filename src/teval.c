@@ -20,13 +20,24 @@
 #include "display.h"
 #include "ptrace.h"
 #include "testio.h"
+#include "child.h"
+
+#include "teval.h"
 
 
 extern struct options_t options;
 
+extern void
+test_mode(void){
+  teval(0,  options.testin,  options.testout);
+  return ;
+}
+
+
+
 
 /* returns true if the child died  */
-bool teval(const pid_t child_pid,  const char *tfilein,  const char *tfileout)
+bool teval(const pid_t pid,  const char *tfilein,  const char *tfileout)
 {
   bool  fatal = false;
   char* tinstr = NULL;
@@ -37,14 +48,18 @@ bool teval(const pid_t child_pid,  const char *tfilein,  const char *tfileout)
 
   ARCH_INIT_PROC_INFO(info);
 
-  info.pid       = child_pid;
-  info.sig       = -1;
-  info.exit_code = -1;
-
   
   bool ok = file2info(tfilein, &tinstr, &info);
     
   if(ok){
+
+    const pid_t child_pid = (pid == 0 ? gen_child() : pid);
+
+    verbose_printf("child process is %d\n", child_pid);
+
+    info.pid       = child_pid;
+    info.sig       = -1;
+    info.exit_code = -1;
 
     const size_t tinstr_sz = strlen(tinstr);
 
@@ -66,7 +81,8 @@ bool teval(const pid_t child_pid,  const char *tfilein,  const char *tfileout)
     ptrace_reset(child_pid, options.start, &info);
 
     /* just for debugging */
-    ptrace_peek(child_pid);
+    if(pid)
+      ptrace_peek(child_pid);
 
     ptrace_cont(child_pid, &info);
 
@@ -74,13 +90,16 @@ bool teval(const pid_t child_pid,  const char *tfilein,  const char *tfileout)
       fatal = true;
     }
     
-    display(&info);
+    if(pid)
+      display(&info);
 
     if( ! info2file(tfileout, &info) ){
       
     }
 
-    
+    if( !pid && !fatal)
+      ptrace_detatch(child_pid, &info);
+
   }
 
  bail:
