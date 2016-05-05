@@ -55,5 +55,4 @@ obj/%.o: arch/${ARCH}/%.c | obj
 	$(CC) $(CFLAGS) $(INC) -c $<  -o $@
 
 clean:
-	$(RM) obj/*.o *~ $(TARGET)
-
+	$(RM) obj/*.o *~ bin/* $(TARGET) 

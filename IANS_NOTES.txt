@@ -12,12 +12,23 @@ Cheat sheet:
 
 all of the text segment ...
 
-./bin/rappel -v -b ../DoubleHelix/Examples/minimal/mini -o 1024 -c  402
+./bin/ripple -v -b ../DoubleHelix/Examples/minimal/mini -o 1024 -c  402
 
 just main
-./bin/rappel -v -b ../DoubleHelix/Examples/minimal/mini -o 1270 -c  30
+
+./bin/ripple -v -b ../DoubleHelix/Examples/minimal/mini -o 1270 -c  30
 
 .execute ../DoubleHelix/Examples/minimal/mini 1270 30
+
+
+for test case generation:
+
+>.teval tfile.in tfile.out
+
+or 
+
+./bin/ripple -t tfile.in -o tfile.out
+
 
 
 .begin
@@ -36,12 +47,3 @@ mov rcx, 48
 rep stosb
 .end
 
-Test Generation:
-
-Either
-
->.teval tfile.in tfile.out
-
-Or:
-
- >./bin/ripple -t tfile.in -o tfile.out
