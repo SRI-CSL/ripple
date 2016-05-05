@@ -19,27 +19,7 @@ void ptrace_reset(
 	regs_struct.rip = start;
 
 	if(info != NULL){
-	  /* this gives 
-     
-	     ptrace(PTRACE_SETREGSET, child_pid, NT_PRSTATUS, &regs) == 0: Input/output error
 
-	     unsigned long long int rsp = regs_struct.rsp ;
-	     regs_struct = info->regs_struct;
-	     regs_struct.rip = start;
-	     regs_struct.rsp = rsp;
-	     
-	     so what is wrong with the rest of info->regs_struct?
-	     the man page says about PTRACE_SETREGS:
-	     
-	     "As for PTRACE_POKEUSER, some general-purpose register
-	     modifications may be disallowed."
-	     
-	     so we use a white list. will have to grok this better ...
-	     
-	  */
-
-	  regs_struct.rip = start;
-	  
 	  regs_struct.rax = info->regs_struct.rax;
 	  regs_struct.rbx = info->regs_struct.rbx;
 	  regs_struct.rcx = info->regs_struct.rcx;
@@ -60,6 +40,7 @@ void ptrace_reset(
 	  regs_struct.rbp = info->regs_struct.rbp;
 
 	  regs_struct.eflags = info->regs_struct.eflags;
+
 	}
 
 	REQUIRE (ptrace(PTRACE_SETREGSET, child_pid, NT_PRSTATUS, &regs) == 0);

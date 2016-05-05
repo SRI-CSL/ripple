@@ -15,13 +15,19 @@
 
 #define MAX_INSTRUCTION_LENGTH   64
 
-static char tinstr[MAX_INSTRUCTION_LENGTH];
+static 
+char tinstr[MAX_INSTRUCTION_LENGTH];
 
-static bool parse_teval_file(const char *tfile, struct proc_info_t *const info);
+static 
+bool parse_teval_file(const char *tfile, struct proc_info_t *const info);
 
-static bool parse_teval_line(const char *line, struct proc_info_t *const info);
+static 
+bool parse_teval_line(const char *line, struct proc_info_t *const info);
 
-static bool parse_teval_cmd(const char *lhs, const char *rhs, struct proc_info_t *const info);
+static 
+bool parse_teval_cmd(const char *lhs, const char *rhs, struct proc_info_t *const info);
+
+
 
 const
 bool file2info(
@@ -182,7 +188,6 @@ bool info2file(
   fclose(fp);
   return true;
 }
-
 
 static bool parse_teval_cmd(const char *lhs, const char *rhs, struct proc_info_t *const info){
 
