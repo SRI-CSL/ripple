@@ -26,12 +26,14 @@ void ptrace_set(
 		const struct proc_info_t *const info
 		)
 {
-  struct user_regs_struct_amd64 regs_struct = info->regs_struct;
+  struct user_regs_struct_amd64 regs_struct = {}; //info->regs_struct;
   struct iovec regs = {.iov_base = &regs_struct, .iov_len = sizeof(regs_struct) };
   
-  //REQUIRE (ptrace(PTRACE_GETREGSET, child_pid, NT_PRSTATUS, &regs) == 0);
+  REQUIRE (ptrace(PTRACE_GETREGSET, child_pid, NT_PRSTATUS, &regs) == 0);
   
   regs_struct.rip = start;
+  regs_struct.rax = info->regs_struct.rax;
+  //ok so this works so what is wrong with the rest of info->regs_struct?
   
   REQUIRE (ptrace(PTRACE_SETREGSET, child_pid, NT_PRSTATUS, &regs) == 0);
 
