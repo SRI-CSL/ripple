@@ -1,0 +1,4 @@
+instr=add eax, ecx
+rax=0xbb8
+rcx=0xfffffffffffff448
+rflags=0x202
