@@ -29,13 +29,6 @@ or
 
 ./bin/ripple -t tfile.in -o tfile.out
 
-The test output should be tweaked so that only the
-things that change get written out to the tfile.out.
-
-Need to write the bytes out to the testout file.
-
-
-
 .begin
 mov rax, 0x5555
 sub rsp, 48
@@ -51,4 +44,21 @@ mov rdi, rsp
 mov rcx, 48
 rep stosb
 .end
+
+
+<random notes of test generation>
+
+The test output should be tweaked so that only the
+things that change get written out to the tfile.out.
+
+Need to write the bytes out to the testout file.
+
+width of register operands should vary.
+
+many variants of the same instruction for
+the same table of inputs.
+
+also include immediate values.
+
+</random notes of test generation>
 
