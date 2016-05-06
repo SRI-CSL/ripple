@@ -12,4 +12,5 @@ bool file2info(
 extern const
 bool info2file(
 	       const char *const,
+	       const char *const,
 	       const struct proc_info_t *const);

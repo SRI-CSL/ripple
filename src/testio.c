@@ -163,25 +163,32 @@ static inline unsigned long long int get_reg_slot(const struct user_regs_struct_
 const
 bool info2file(
 	       const char *const fileout,
+	       const char *const header,
 	       const struct proc_info_t *const info)
 {
   
   assert(fileout != NULL);
+  assert(header != NULL);
   assert(info != NULL);
 
-  FILE* fp = fopen(fileout, "w");
+  FILE* fp = fopen(fileout, "a+");
 
   if(fp == NULL){
     perror("fopen");
     return false;
   }
 
+  fprintf(fp, "# %s:\n", header);
+
   int index = 0;
   char* regname;
 
   while((regname = register_slots[index]) != NULL){
-    unsigned long long int val = get_reg_slot(&info->regs_struct, index);
-    fprintf(fp, "%s="REGFMT"\n", regname, val);
+    unsigned long long int old_val = get_reg_slot(&info->old_regs_struct, index);
+    unsigned long long int new_val = get_reg_slot(&info->regs_struct, index);
+    if(old_val != new_val){
+      fprintf(fp, "%s="REGFMT"\n", regname, new_val);
+    }
     index++;
   }
   

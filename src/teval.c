@@ -35,6 +35,33 @@ test_mode(void){
 
 
 
+static bool assembly2file(const char *fileout, const uint8_t *const buf, const size_t sz){
+
+  FILE* fp = fopen(fileout, "w");
+
+  if(fp == NULL){
+    perror("fopen");
+    return false;
+  }
+
+  fprintf(fp, "# bytes:\n");
+  
+  for (size_t i = 0; i < sz; i += 0x10) {
+    for (size_t j = i; j < (i + 0x10); j++) {
+      if (j < sz)
+	fprintf(fp, "%02x ", buf[j]);
+      else {
+	fprintf(fp, "\n");
+	break;
+      }
+    }
+  }
+
+  fclose(fp);
+  return true;
+}
+
+
 
 /* returns true if the child died  */
 bool teval(const pid_t pid,  const char *tfilein,  const char *tfileout)
@@ -75,7 +102,16 @@ bool teval(const pid_t pid,  const char *tfilein,  const char *tfileout)
       fprintf(stderr, "'%s' assembled to 0 length bytecode\n", tinstr);
       goto bail;
     }
-    
+
+    if(! assembly2file(tfileout, bytecode, bytecode_sz) ){
+      fprintf(stderr, "'%s' assembled to 0 length bytecode\n", tinstr);
+      goto bail;
+    }
+
+    if( ! info2file(tfileout, "input", &info) ){
+      
+    }
+   
     ptrace_write(child_pid, (void *)options.start, bytecode, bytecode_sz);
 
     ptrace_reset(child_pid, options.start, &info);
@@ -93,7 +129,7 @@ bool teval(const pid_t pid,  const char *tfilein,  const char *tfileout)
     if(pid)
       display(&info);
 
-    if( ! info2file(tfileout, &info) ){
+    if( ! info2file(tfileout, "output", &info) ){
       
     }
 

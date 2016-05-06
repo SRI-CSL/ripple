@@ -48,6 +48,8 @@ rep stosb
 
 <random notes of test generation>
 
+grok the consts.
+
 The test output should be tweaked so that only the
 things that change get written out to the tfile.out.
 
@@ -59,6 +61,18 @@ many variants of the same instruction for
 the same table of inputs.
 
 also include immediate values.
+
+
+tables:
+
+opcode:  name; arity
+
+registers: name; width
+
+immediates: name; width; value
+
+operands: either a reg or an immediate
+
 
 </random notes of test generation>
 
