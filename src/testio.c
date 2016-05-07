@@ -184,11 +184,15 @@ bool info2file(
   char* regname;
 
   while((regname = register_slots[index]) != NULL){
-    unsigned long long int old_val = get_reg_slot(&info->old_regs_struct, index);
-    unsigned long long int new_val = get_reg_slot(&info->regs_struct, index);
-    if(old_val != new_val){
-      fprintf(fp, "%s="REGFMT"\n", regname, new_val);
+    /* not interested in rip or orig_rax */
+    if(strcmp(regname, "orig_rax") && strcmp(regname, "rip")){
+      unsigned long long int old_val = get_reg_slot(&info->old_regs_struct, index);
+      unsigned long long int new_val = get_reg_slot(&info->regs_struct, index);
+      if(old_val != new_val){
+	fprintf(fp, "%s="REGFMT"\n", regname, new_val);
+      }
     }
+    
     index++;
   }
   
