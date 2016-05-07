@@ -115,6 +115,33 @@ static bool parse_teval_line(const char *line, struct proc_info_t *const info){
   return success;
 }
 
+bool instruction2file(const char *fileout, const char* tinstr, const uint8_t *const buf, const size_t sz){
+
+  FILE* fp = fopen(fileout, "w");
+
+  if(fp == NULL){
+    perror("fopen");
+    return false;
+  }
+
+  fprintf(fp, "# instruction:\n%s\n", tinstr);
+
+  fprintf(fp, "# bytes:\n");
+  
+  for (size_t i = 0; i < sz; i += 0x10) {
+    for (size_t j = i; j < (i + 0x10); j++) {
+      if (j < sz)
+	fprintf(fp, "%02x ", buf[j]);
+      else {
+	fprintf(fp, "\n");
+	break;
+      }
+    }
+  }
+
+  fclose(fp);
+  return true;
+}
 
 /* these are in the order they appear in the struct */
 static char* register_slots[] = 

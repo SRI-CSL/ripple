@@ -33,51 +33,6 @@ test_mode(void){
   return ;
 }
 
-static bool instruction2file(const char *fileout, const char* tinstr){
-
-  FILE* fp = fopen(fileout, "w");
-
-  if(fp == NULL){
-    perror("fopen");
-    return false;
-  }
-
-  fprintf(fp, "# instruction:\n%s\n", tinstr);
-
-  fclose(fp);
-  return true;
-}
-
-
-  
-
-
-static bool assembly2file(const char *fileout, const uint8_t *const buf, const size_t sz){
-
-  FILE* fp = fopen(fileout, "a");
-
-  if(fp == NULL){
-    perror("fopen");
-    return false;
-  }
-
-  fprintf(fp, "# bytes:\n");
-  
-  for (size_t i = 0; i < sz; i += 0x10) {
-    for (size_t j = i; j < (i + 0x10); j++) {
-      if (j < sz)
-	fprintf(fp, "%02x ", buf[j]);
-      else {
-	fprintf(fp, "\n");
-	break;
-      }
-    }
-  }
-
-  fclose(fp);
-  return true;
-}
-
 
 
 /* returns true if the child died  */
@@ -124,16 +79,12 @@ bool teval(const pid_t pid,  const char *tfilein,  const char *tfileout)
       
     }
 
-    if(! instruction2file(tfileout, tinstr) ){
-      goto bail;
-    }
-
-    if(! assembly2file(tfileout, bytecode, bytecode_sz) ){
+    if(! instruction2file(tfileout, tinstr, bytecode, bytecode_sz) ){
       goto bail;
     }
 
     if( ! info2file(tfileout, "input", &info) ){
-      
+      goto bail;
     }
    
     ptrace_write(child_pid, (void *)options.start, bytecode, bytecode_sz);
