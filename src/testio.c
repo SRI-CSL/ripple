@@ -134,7 +134,7 @@ static char* register_slots[] =
     "rdx",
     "rsi",
     "rdi",
-    "orig_rax",
+    "orig_rax",  
     "rip",
     "cs",
     "rflags",  //called eflags in the struct { ... }

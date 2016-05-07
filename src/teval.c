@@ -33,11 +33,28 @@ test_mode(void){
   return ;
 }
 
+static bool instruction2file(const char *fileout, const char* tinstr){
+
+  FILE* fp = fopen(fileout, "w");
+
+  if(fp == NULL){
+    perror("fopen");
+    return false;
+  }
+
+  fprintf(fp, "# instruction:\n%s\n", tinstr);
+
+  fclose(fp);
+  return true;
+}
+
+
+  
 
 
 static bool assembly2file(const char *fileout, const uint8_t *const buf, const size_t sz){
 
-  FILE* fp = fopen(fileout, "w");
+  FILE* fp = fopen(fileout, "a");
 
   if(fp == NULL){
     perror("fopen");
@@ -100,11 +117,18 @@ bool teval(const pid_t pid,  const char *tfilein,  const char *tfileout)
 
     if (!bytecode_sz) {
       fprintf(stderr, "'%s' assembled to 0 length bytecode\n", tinstr);
+      if ( pid  )
+	goto bail;
+      else
+	exit(EXIT_FAILURE);
+      
+    }
+
+    if(! instruction2file(tfileout, tinstr) ){
       goto bail;
     }
 
     if(! assembly2file(tfileout, bytecode, bytecode_sz) ){
-      fprintf(stderr, "'%s' assembled to 0 length bytecode\n", tinstr);
       goto bail;
     }
 
