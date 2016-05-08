@@ -32,7 +32,8 @@ void usage(
 	   const char *argv0,
 	   const bool ok)
 {
-  fprintf(ok ? stdout : stderr, "Usage: %s [options]\n"
+  fprintf(ok ? stdout : stderr,
+	  "Usage: %s [options]\n"
 	  "\t-h\t\tDisplay this help\n"
 	  "\t-r\t\tTreat stdin as raw bytecode (useful for ascii shellcode)\n"
 	  "\t-p\t\tPass signals to child process (will allow child to kill itself via SIGSEGV, others)\n"
