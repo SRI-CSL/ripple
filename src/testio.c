@@ -117,7 +117,7 @@ static bool parse_teval_line(const char *line, struct proc_info_t *const info){
 
 bool instruction2file(const char *fileout, const char* tinstr, const uint8_t *const buf, const size_t sz){
 
-  FILE* fp = fopen(fileout, "w");
+  FILE* fp = fileout == NULL ? stdout : fopen(fileout, "w");
 
   if(fp == NULL){
     perror("fopen");
@@ -139,7 +139,9 @@ bool instruction2file(const char *fileout, const char* tinstr, const uint8_t *co
     }
   }
 
-  fclose(fp);
+  if (fp != stdout)
+    fclose(fp);
+  
   return true;
 }
 
@@ -194,11 +196,10 @@ bool info2file(
 	       const struct proc_info_t *const info)
 {
   
-  assert(fileout != NULL);
   assert(header != NULL);
   assert(info != NULL);
 
-  FILE* fp = fopen(fileout, "a+");
+  FILE* fp = fileout == NULL ? stdout : fopen(fileout, "a+");
 
   if(fp == NULL){
     perror("fopen");
@@ -223,8 +224,10 @@ bool info2file(
     
     index++;
   }
+
+  if (fp != stdout)
+    fclose(fp);
   
-  fclose(fp);
   return true;
 }
 

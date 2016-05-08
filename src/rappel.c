@@ -106,14 +106,8 @@ int main(int argc, char **argv) {
 
 	parse_opts(argc, argv);
 	
-	if(options.testin || options.testout){
-
-	  if(options.testin && options.testout){
+	if(options.testin){
 	    test_mode();
-	  } else {
-	    usage(argv[0], false);
-	  }
-
 	} else if (options.binary != NULL)
 	  binary_mode();
 	else if (isatty(STDIN_FILENO))
