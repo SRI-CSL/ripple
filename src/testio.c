@@ -215,6 +215,7 @@ bool info2file(
     if(strcmp(regname, "orig_rax") && strcmp(regname, "rip")){
       unsigned long long int old_val = get_reg_slot(&info->old_regs_struct, index);
       unsigned long long int new_val = get_reg_slot(&info->regs_struct, index);
+      //only print changed values
       if(old_val != new_val){
 	fprintf(fp, "%s="REGFMT"\n", regname, new_val);
       }
