@@ -29,23 +29,24 @@ struct options_t options = {
 
 static
 void usage(
-		const char *argv0)
+	   const char *argv0,
+	   const bool ok)
 {
-	fprintf(stderr, "Usage: %s [options]\n"
-			"\t-h\t\tDisplay this help\n"
-			"\t-r\t\tTreat stdin as raw bytecode (useful for ascii shellcode)\n"
-			"\t-p\t\tPass signals to child process (will allow child to kill itself via SIGSEGV, others)\n"
-			"\t-s <filename>\tSave generated exe to <filename>\n"
-			"\t-x\t\tDisplay all registers (FP)\n"
-			"\t-v\t\tIncrease verbosity\n"
-			"\t-b <binary>\t\tLoad from an binary (need to also use -c)\n"
-			"\t-f <offset>\t\toffset into the binary\n"
-			"\t-c <bytes>\t\tnumber of bytes to read from the binary\n"
-			"\t-t <test input file>\t\texecute the test file (use -o to provide output file)\n"
-			"\t-o <test output file>\t\tstore the results of the execution of the test file\n"
-			, argv0);
+  fprintf(ok ? stdout : stderr, "Usage: %s [options]\n"
+	  "\t-h\t\tDisplay this help\n"
+	  "\t-r\t\tTreat stdin as raw bytecode (useful for ascii shellcode)\n"
+	  "\t-p\t\tPass signals to child process (will allow child to kill itself via SIGSEGV, others)\n"
+	  "\t-s <filename>\tSave generated exe to <filename>\n"
+	  "\t-x\t\tDisplay all registers (FP)\n"
+	  "\t-v\t\tIncrease verbosity\n"
+	  "\t-b <binary>\t\tLoad from an binary (need to also use -c)\n"
+	  "\t-f <offset>\t\toffset into the binary\n"
+	  "\t-c <bytes>\t\tnumber of bytes to read from the binary\n"
+	  "\t-t <test input file>\t\texecute the test file (use -o to provide output file)\n"
+	  "\t-o <test output file>\t\tstore the results of the execution of the test file\n"
+	  , argv0);
 
-	exit(EXIT_FAILURE);
+  exit(ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 static
@@ -57,7 +58,7 @@ void parse_opts(
   while ((c = getopt(argc, argv, "t:o:s:b:f:c:hrpvx")) != -1)
     switch (c) {
     case 'h':
-      usage(argv[0]);
+      usage(argv[0], true);
       break;
     case 'r':
       ++options.raw;
@@ -109,7 +110,7 @@ int main(int argc, char **argv) {
 	  if(options.testin && options.testout){
 	    test_mode();
 	  } else {
-	    usage(argv[0]);
+	    usage(argv[0], false);
 	  }
 
 	} else if (options.binary != NULL)
