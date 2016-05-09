@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <sys/wait.h>
 
+#include <sys/resource.h>
+
 #include "common.h"
 #include "exedir.h"
 #include "pipe.h"
@@ -99,12 +101,23 @@ void parse_opts(
 
 }
 
+
+static rlimit nocore;
+
 int main(int argc, char **argv) {
-	// Lot of arg parsing here
 
-	clean_exedir();
+  //prevent the child from dumping core all the time.
+  int retcode = setrlimit(RLIMIT_CORE, &nocore);
+  if(retcode != 0){
+    perror("setrlimit");
 
-	parse_opts(argc, argv);
+  }
+
+  // Lot of arg parsing here
+  
+  clean_exedir();
+  
+  parse_opts(argc, argv);
 	
 	if(options.testin){
 	    test_mode();
