@@ -15,14 +15,17 @@
 #include "common.h"
 #include "exedir.h"
 
-#define TMPDIR ".rappel"
+#define TEMPNAMESZ 1024
+
+static char tempdir[TEMPNAMESZ];
 
 static
 void _cd_exedir()
 {
   // Attempt to use /tmp instead of the HOME directory
   // This ensures all temporary files are on the local machine
-  // (not NFS mounted)
+  // (not NFS mounted). Thus we make an effort to ensure
+  // different users don't interfere with one another.
 #if 0
   const char *const home = getenv("HOME");
 
@@ -34,15 +37,23 @@ void _cd_exedir()
   const char *const home = "/tmp";
 
   REQUIRE (chdir(home) == 0);
+
+  const int retcode = snprintf(tempdir, TEMPNAMESZ, ".rappel%d", getuid());
+
+  if(retcode < 0 || retcode >= TEMPNAMESZ){
+    fprintf(stderr, "snprintf in  _cd_exedir failed\n");
+    exit(EXIT_FAILURE);
+  }
+    
   
-  if (mkdir(TMPDIR, 0755) == -1) {
+  if (mkdir(tempdir, 0755) == -1) {
     if (errno != EEXIST) {
       perror("mkdir");
       exit(EXIT_FAILURE);
     }
   }
   
-  REQUIRE (chdir(TMPDIR) == 0);
+  REQUIRE (chdir(tempdir) == 0);
 }
 
 static const
