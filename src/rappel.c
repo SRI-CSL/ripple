@@ -102,7 +102,7 @@ void parse_opts(
 }
 
 
-static rlimit nocore;
+static struct rlimit nocore;
 
 int main(int argc, char **argv) {
 
@@ -110,7 +110,6 @@ int main(int argc, char **argv) {
   int retcode = setrlimit(RLIMIT_CORE, &nocore);
   if(retcode != 0){
     perror("setrlimit");
-
   }
 
   // Lot of arg parsing here

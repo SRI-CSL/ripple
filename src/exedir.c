@@ -20,23 +20,29 @@
 static
 void _cd_exedir()
 {
-	const char *const home = getenv("HOME");
+  // Attempt to use /tmp instead of the HOME directory
+  // This ensures all temporary files are on the local machine
+  // (not NFS mounted)
+#if 0
+  const char *const home = getenv("HOME");
 
-	if (!home) {
-		fprintf(stderr, "HOME not set");
-		exit(EXIT_FAILURE);
-	}
+  if (!home) {
+    fprintf(stderr, "HOME not set");
+    exit(EXIT_FAILURE);
+  }
+#endif
+  const char *const home = "/tmp";
 
-	REQUIRE (chdir(home) == 0);
-
-	if (mkdir(TMPDIR, 0755) == -1) {
-		if (errno != EEXIST) {
-			perror("mkdir");
-			exit(EXIT_FAILURE);
-		}
-	}
-
-	REQUIRE (chdir(TMPDIR) == 0);
+  REQUIRE (chdir(home) == 0);
+  
+  if (mkdir(TMPDIR, 0755) == -1) {
+    if (errno != EEXIST) {
+      perror("mkdir");
+      exit(EXIT_FAILURE);
+    }
+  }
+  
+  REQUIRE (chdir(TMPDIR) == 0);
 }
 
 static const
