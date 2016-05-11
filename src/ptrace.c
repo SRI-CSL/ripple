@@ -97,11 +97,30 @@ int ptrace_write(
 	for (unsigned i = 0; i < alloc_sz / sizeof(long); i++) {
 		const unsigned long addr = (unsigned long)base + i * sizeof(long);
 		const unsigned long val  = copy[i];
+		
+		int status = 0;
+		int rcode = 0;
 
 		verbose_printf("ptrace_write: " REGFMT " = " REGFMT "\n", addr, val);
 
 		if (ptrace(PTRACE_POKETEXT, child_pid, addr, val) == -1) {
 		  ret = -1;
+		  perror("ptrace-poke");
+		  if(errno == ESRCH){
+		    fprintf(stderr, "child_pid = %d\n", child_pid);
+		    rcode = waitpid(child_pid, &status, WNOHANG | WCONTINUED);
+		    fprintf(stderr, "waitpid returned %d status = %d\n", rcode, status);
+
+		    fprintf(stderr, "WIFEXITED(status) = %d\n", WIFEXITED(status));
+		    fprintf(stderr, "WEXITSTATUS(status) = %d\n", WEXITSTATUS(status));
+		    fprintf(stderr, "WIFSIGNALED(status) = %d\n", WIFSIGNALED(status));
+		    fprintf(stderr, "WTERMSIG(status) = %d\n", WTERMSIG(status));
+		    fprintf(stderr, "WCOREDUMP((status) = %d\n", WCOREDUMP(status));
+		    fprintf(stderr, "WIFSTOPPED(status) = %d\n", WIFSTOPPED(status));
+		    fprintf(stderr, "WSTOPSIG(status) = %d\n", WSTOPSIG(status));
+		    fprintf(stderr, "WIFCONTINUED(status) = %d\n", WIFCONTINUED(status));
+		    
+		  }
 		  fprintf(stderr, "ptrace(PTRACE_POKETEXT) - failed to write value " REGFMT " to " REGFMT "\n", val, addr);
 		  fprintf(stderr, "addr = %ul val = %ul i = %u  copy[i] = %ul\n", addr, val, i, copy[i]);
 		}
