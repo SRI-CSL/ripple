@@ -101,11 +101,12 @@ int ptrace_write(
 		verbose_printf("ptrace_write: " REGFMT " = " REGFMT "\n", addr, val);
 
 		if (ptrace(PTRACE_POKETEXT, child_pid, addr, val) == -1) {
-			ret = -1;
-			fprintf(stderr, "ptrace() - failed to write value " REGFMT " to " REGFMT "\n", val, addr);
+		  ret = -1;
+		  fprintf(stderr, "ptrace() - failed to write value " REGFMT " to " REGFMT "\n", val, addr);
+		  fprintf(stderr, "addr = %ul val = %ul i = %u  copy[i] = %ul\n", addr, val, i, copy[i]);
 		}
 	}
-
+	
 	free(copy);
 
 	return ret;
