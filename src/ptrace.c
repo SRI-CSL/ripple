@@ -102,7 +102,7 @@ int ptrace_write(
 
 		if (ptrace(PTRACE_POKETEXT, child_pid, addr, val) == -1) {
 		  ret = -1;
-		  fprintf(stderr, "ptrace() - failed to write value " REGFMT " to " REGFMT "\n", val, addr);
+		  fprintf(stderr, "ptrace(PTRACE_POKETEXT) - failed to write value " REGFMT " to " REGFMT "\n", val, addr);
 		  fprintf(stderr, "addr = %ul val = %ul i = %u  copy[i] = %ul\n", addr, val, i, copy[i]);
 		}
 	}
@@ -135,7 +135,7 @@ int ptrace_read(
 
 		if (errno) {
 			ret = -1;
-			fprintf(stderr, "ptrace() - failed to read value at " REGFMT "\n", addr);
+			fprintf(stderr, "ptrace(PTRACE_PEEKDATA) - failed to read value at " REGFMT "\n", addr);
 		}
 	}
 
