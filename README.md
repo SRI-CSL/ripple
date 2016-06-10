@@ -24,7 +24,10 @@ Usage: ./bin/ripple [options]
 	-o <test output file>	store the results of the execution of the test file
 ```
 
-The new commands we implemented include:  
+The new commands we implemented include: 
+some minor fixes that make using it easier, two notable ones are
+preventing the child from always dumping core, and using `/tmp` rather
+than the home directory of the user for the temporary files; 
 the ability to execute a sequence of instructions
 from a preexisting binary (hence avoiding having to convert from Intel ASM to NASM);
 and the ability to execute a test file describing the state and save the resulting 
@@ -53,7 +56,7 @@ rax=0x0000000000000667
 rflags=0x0000000000000202
 ```
 
-
+We use this to autogenerate  PVS files for each instruction tha we encode.
 
 
 
