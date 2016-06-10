@@ -105,7 +105,7 @@ int ptrace_write(
 
 		if (ptrace(PTRACE_POKETEXT, child_pid, addr, val) == -1) {
 		  ret = -1;
-		  perror("ptrace-poke");
+		  perror("\nptrace-poke");
 		  if(errno == ESRCH){
 		    fprintf(stderr, "child_pid = %d\n", child_pid);
 		    rcode = waitpid(child_pid, &status, WNOHANG | WCONTINUED);

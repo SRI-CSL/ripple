@@ -5,7 +5,56 @@ Rappel is a pretty janky assembly REPL. It works by creating a shell ELF, starti
 ## ripple 
 
 This version `ripple` is an even jankier version that we use to test and verify our PVS
-encoding of x86_64.
+encoding of x86_64.  Our modifications and extensions have only been implemented for 
+the x86_64 architecture.
+
+```
+>./bin/ripple -help
+Usage: ./bin/ripple [options]
+	-h		Display this help
+	-r		Treat stdin as raw bytecode (useful for ascii shellcode)
+	-p		Pass signals to child process (will allow child to kill itself via SIGSEGV, others)
+	-s <filename>	Save generated exe to <filename>
+	-x		Display all registers (FP)
+	-v		Increase verbosity
+	-b <binary>		Load from an binary (need to also use -c)
+	-f <offset>		offset into the binary
+	-c <bytes>		number of bytes to read from the binary
+	-t <test input file>	execute the test file (use -o to provide output file)
+	-o <test output file>	store the results of the execution of the test file
+```
+
+The new commands we implemented include:  
+the ability to execute a sequence of instructions
+from a preexisting binary (hence avoiding having to convert from Intel ASM to NASM);
+and the ability to execute a test file describing the state and save the resulting 
+state. For example, if `tfile.in` contains:
+```
+instr=inc rax
+rax=0x666
+rflags=0x202
+
+```
+then after 
+```
+./bin/ripple -t tfile.in -o tfile.out
+```
+`file.out` contains
+```
+# instruction:
+inc rax
+# bytes:
+48 ff c0 
+# input:
+rax=0x0000000000000666
+rflags=0x0000000000000202
+# output:
+rax=0x0000000000000667
+rflags=0x0000000000000202
+```
+
+
+
 
 
 ## Install
@@ -31,7 +80,7 @@ In theory you can also compile an armv7 binary this way, but I really doubt it w
 Rappel has two modes it can operate in. A pipe mode for one off things, a la
 
 ```
-$ echo "inc eax" | bin/rappel
+$ echo "inc eax" | bin/ripple
 rax:0x0000000000000001  rbx:0x0000000000000000  rcx:0x0000000000000000  rdx:0x0000000000000000
 rsi:0x0000000000000000  rdi:0x0000000000000000  r8 :0x0000000000000000  r9 :0x0000000000000000
 r10:0x0000000000000000  r11:0x0000000000000000  r12:0x0000000000000000  r13:0x0000000000000000
@@ -44,7 +93,7 @@ $
 Or an interactive mode:
 
 ```
-$ bin/rappel
+$ bin/ripple
 rax:0x0000000000000000  rbx:0x0000000000000000  rcx:0x0000000000000000  rdx:0x0000000000000000
 rsi:0x0000000000000000  rdi:0x0000000000000000  r8 :0x0000000000000000  r9 :0x0000000000000000
 r10:0x0000000000000000  r11:0x0000000000000000  r12:0x0000000000000000  r13:0x0000000000000000
@@ -85,7 +134,7 @@ $
 
 x86 looks like:
 ```
-$ echo "nop" | bin/rappel
+$ echo "nop" | bin/ripple
 eax:0x00000000  ebx:0x00000000  ecx:0x00000000  edx:0x00000000
 esi:0x00000000  edi:0x00000000
 eip:0x00400002  esp:0xffffdf10  ebp:0x00000000
@@ -95,7 +144,7 @@ $
 
 ARM looks like:
 ```
-$ echo "nop" | bin/rappel
+$ echo "nop" | bin/ripple
 R0 :0x00000000	R1 :0x00000000	R2 :0x00000000	R3 :0x00000000
 R4 :0x00000000	R5 :0x00000000	R6 :0x00000000	R7 :0x00000000
 R8 :0x00000000	R9 :0x00000000	R10:0x00000000
