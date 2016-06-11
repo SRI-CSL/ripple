@@ -16,6 +16,7 @@
 #include "exedir.h"
 
 #define TEMPNAMESZ 1024
+#define TEMPFILEFMT ".ripple%d"
 
 static char tempdir[TEMPNAMESZ];
 
@@ -38,7 +39,7 @@ void _cd_exedir()
 
   REQUIRE (chdir(home) == 0);
 
-  const int retcode = snprintf(tempdir, TEMPNAMESZ, ".rappel%d", getuid());
+  const int retcode = snprintf(tempdir, TEMPNAMESZ, TEMPFILEFMT, getuid());
 
   if(retcode < 0 || retcode >= TEMPNAMESZ){
     fprintf(stderr, "snprintf in  _cd_exedir failed\n");

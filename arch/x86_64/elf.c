@@ -36,7 +36,10 @@ const size_t gen_elf(
 	 * +----------+
 	 *
 	 * TODO add data section, section headers
-	*/
+	 *
+	 * Ian says:  not seeing the two pages of data...
+	 *
+	 */
 
 	const size_t pg_align_dist = start - (start & ~0xffff);
 	const size_t pad_sz = PAGE_SIZE - (PAGE_SIZE % code_sz);
@@ -47,29 +50,28 @@ const size_t gen_elf(
 
 	Elf64_Ehdr *const ehdr = (Elf64_Ehdr *) e;
 	
-	ehdr->e_ident[0] = ELFMAG0;
-	ehdr->e_ident[1] = ELFMAG1;
-	ehdr->e_ident[2] = ELFMAG2;
-	ehdr->e_ident[3] = ELFMAG3;
-	ehdr->e_ident[4] = ELFCLASS64;
-	ehdr->e_ident[5] = ELFDATA2LSB;
-	ehdr->e_ident[6] = EV_CURRENT;
-	ehdr->e_ident[7] = ELFOSABI_NONE;
-	ehdr->e_ident[9] = 0;
-	// Padding
-	ehdr->e_type = ET_EXEC;
-	ehdr->e_machine = EM_X86_64;
-	ehdr->e_version = EV_CURRENT;
-	ehdr->e_entry = start;
-	ehdr->e_phoff = sizeof(Elf64_Ehdr);
-	ehdr->e_shoff = 0; // XXX
-	ehdr->e_flags = 0;
-	ehdr->e_ehsize = sizeof(Elf64_Ehdr);
-	ehdr->e_phentsize = sizeof(Elf64_Phdr);
-	ehdr->e_phnum = 1;
-	ehdr->e_shentsize = 0;
-	ehdr->e_shnum = 0;
-	ehdr->e_shstrndx = 0;
+	ehdr->e_ident[0] = ELFMAG0;              // 0x7f
+	ehdr->e_ident[1] = ELFMAG1;              // 'E'
+	ehdr->e_ident[2] = ELFMAG2;              // 'L'
+	ehdr->e_ident[3] = ELFMAG3;              // 'F'
+	ehdr->e_ident[4] = ELFCLASS64;           // Class 32/64 (64 bit here)
+	ehdr->e_ident[5] = ELFDATA2LSB;          // Byte order (little endian)
+	ehdr->e_ident[6] = EV_CURRENT;           // Elf spec version
+	ehdr->e_ident[7] = ELFOSABI_NONE;        // ABI (UNIX System V ABI)
+	ehdr->e_ident[9] = 0;                    // Padding
+	ehdr->e_type = ET_EXEC;                  // Type (executable)
+	ehdr->e_machine = EM_X86_64;             // Architecture (AMD x86_64)
+	ehdr->e_version = EV_CURRENT;            // File version
+	ehdr->e_entry = start;                   // entry point
+	ehdr->e_phoff = sizeof(Elf64_Ehdr);      // offset to program header
+	ehdr->e_shoff = 0;                       // Section header offset XXX
+	ehdr->e_flags = 0;                       // Flags
+	ehdr->e_ehsize = sizeof(Elf64_Ehdr);     // Elf header size in bytes
+	ehdr->e_phentsize = sizeof(Elf64_Phdr);  // Size of one entry in the program header table
+	ehdr->e_phnum = 1;                       // Number of entries in the program header table
+	ehdr->e_shentsize = 0;                   // Size of one entry in the section header table
+	ehdr->e_shnum = 0;                       // Number of entries in the section header table
+	ehdr->e_shstrndx = 0;                    // Section header name string index (should be: SHN_UNDEF)
 
 	Elf64_Phdr *const phdr = (Elf64_Phdr *) ((uint8_t *) e + sizeof(Elf64_Ehdr));
 
