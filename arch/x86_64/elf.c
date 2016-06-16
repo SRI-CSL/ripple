@@ -51,7 +51,6 @@ const size_t gen_elf(
   const size_t str_tbl_sz = sizeof(_str_tbl);
 
   const int nshdr  =  4;  //one initial, one text, one data, and one section header string table
-  const size_t shdr_sz =  nshdr * sizeof(Elf64_Shdr);
 
   const size_t pg_align_dist = start - (start & ~0xffff);
   const size_t pad_sz = PAGE_SIZE - (PAGE_SIZE % code_sz);
@@ -85,29 +84,37 @@ const size_t gen_elf(
   ehdr->e_flags = 0;                       // Flags
   ehdr->e_ehsize = sizeof(Elf64_Ehdr);     // Elf header size in bytes
   ehdr->e_phentsize = sizeof(Elf64_Phdr);  // Size of one entry in the program header table
-  ehdr->e_phnum = 1;                       // Number of entries in the program header table
+  ehdr->e_phnum = 2;                       // Number of entries in the program header table
   ehdr->e_shentsize = sizeof(Elf64_Shdr);  // Size of one entry in the section header table
-  ehdr->e_shnum = 4;                       // Number of entries in the section header table
-  ehdr->e_shstrndx = 3;                    // Section header name string index (should be: SHN_UNDEF)
+  ehdr->e_shnum = nshdr;                   // Number of entries in the section header table
+  ehdr->e_shstrndx = nshdr - 1;            // Section header name string index (should be: SHN_UNDEF)
 
   Elf64_Phdr *const phdr = (Elf64_Phdr *) ((uint8_t *) e + sizeof(Elf64_Ehdr));
 
-  phdr->p_type = PT_LOAD;
-  phdr->p_flags = PF_X | PF_R;
-  phdr->p_offset = PAGE_SIZE;
-  phdr->p_vaddr = start - pg_align_dist;
-  phdr->p_paddr = 0;
-  phdr->p_filesz = code_sz + pg_align_dist; 
-  phdr->p_memsz = code_sz + pg_align_dist;
-  phdr->p_align = 0x4;
+  phdr[0].p_type = PT_LOAD;
+  phdr[0].p_flags = PF_X | PF_R;
+  phdr[0].p_offset = PAGE_SIZE;
+  phdr[0].p_vaddr = start - pg_align_dist;
+  phdr[0].p_paddr = 0;
+  phdr[0].p_filesz = code_sz + pg_align_dist; 
+  phdr[0].p_memsz = code_sz + pg_align_dist;
+  phdr[0].p_align = 0x4;
+
+  phdr[1].p_type = PT_LOAD;
+  phdr[1].p_flags = PF_W | PF_R;
+  phdr[1].p_offset = 2 * PAGE_SIZE;
+  phdr[1].p_vaddr = start + PAGE_SIZE;
+  phdr[1].p_paddr = 0;
+  phdr[1].p_filesz = PAGE_SIZE; 
+  phdr[1].p_memsz = PAGE_SIZE;
+  phdr[1].p_align = 0x8;
 
   uint8_t *const text = (uint8_t *) e + PAGE_SIZE + pg_align_dist;
   memcpy(text, code, code_sz);
 
-  uint8_t *const data = (uint8_t *) e + sz;
+  uint8_t *const data = (uint8_t *) e  + 2 * PAGE_SIZE;
 
-  memset(data, 0, d_sz);
-  
+  memset(data, 1, d_sz);
 
   Elf64_Shdr *const shdr = ( Elf64_Shdr *)(e + (3 * PAGE_SIZE)); 
 
@@ -146,9 +153,9 @@ const size_t gen_elf(
   shdr[2].sh_name = 7;                 //index into the str_tbl
   shdr[2].sh_type = SHT_PROGBITS;
   shdr[2].sh_flags = SHF_WRITE | SHF_ALLOC;
-  shdr[2].sh_addr = 0;                 //address where the section *will* reside
+  shdr[2].sh_addr = start + PAGE_SIZE; //address where the section *will* reside
   shdr[2].sh_offset = 2 * PAGE_SIZE;   //where this section starts in the file
-  shdr[2].sh_size = shdr_sz;           //size in bytes
+  shdr[2].sh_size = PAGE_SIZE;         //size in bytes
   shdr[2].sh_link = SHN_UNDEF;
   shdr[2].sh_info = 0;
   shdr[2].sh_addralign = 32;           //no alignment requirements
@@ -163,7 +170,7 @@ const size_t gen_elf(
   shdr[3].sh_size = str_tbl_sz;        //size in bytes
   shdr[3].sh_link = SHN_UNDEF;
   shdr[3].sh_info = 0;
-  shdr[3].sh_addralign = 1;           //no alignment requirements
+  shdr[3].sh_addralign = 1;            //no alignment requirements
   shdr[3].sh_entsize = 0;
 
   *out = e;
